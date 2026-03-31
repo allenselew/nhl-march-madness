@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NHL 2025–26 Western Conference Playoff Predictor</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #07111e;
+                --bg-card: #0b1a2b;
+                --bg-deep: #050d17;
+                --border: rgba(255, 255, 255, 0.07);
+                --border-med: rgba(255, 255, 255, 0.12);
+                --ice: #38bdf8;
+                --ice-dim: rgba(56, 189, 248, 0.12);
+                --text: #dbeafe;
+                --text-dim: #8aa0b8;
+                --text-bright: #f1f7ff;
+                --win: #4ade80;
+                --win-bg: rgba(74, 222, 128, 0.1);
+                --win-border: rgba(74, 222, 128, 0.5);
+                --otl: #fbbf24;
+                --otl-bg: rgba(251, 191, 36, 0.1);
+                --otl-border: rgba(251, 191, 36, 0.5);
+                --loss: #f87171;
+                --loss-bg: rgba(248, 113, 113, 0.1);
+                --loss-border: rgba(248, 113, 113, 0.5);
+                --wc1-bg: rgba(74, 222, 128, 0.09);
+                --wc1-accent: #4ade80;
+                --wc2-bg: rgba(56, 189, 248, 0.09);
+                --wc2-accent: #38bdf8;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Barlow", sans-serif;
+                font-size: 13px;
+                min-width: 1140px;
+            }
+
+            /* ─── PAGE HEADER ───────────────────────────────────────── */
+            #page-header {
+                background: linear-gradient(160deg, #0b1e35 0%, #071624 60%, #040e1a 100%);
+                border-bottom: 1px solid var(--border-med);
+                padding: 16px 24px 14px;
+                display: flex;
+                align-items: baseline;
+                gap: 16px;
+            }
+            #page-header h1 {
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 26px;
+                font-weight: 800;
+                color: var(--text-bright);
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+            }
+            #page-header h1 span {
+                color: var(--ice);
+            }
+            #page-header p {
+                font-size: 11px;
+                color: var(--text-dim);
+                letter-spacing: 0.3px;
+            }
+
+            /* ─── TOP SECTION (3 tables) ───────────────────────────── */
+            .top-section {
+                display: flex;
+                gap: 18px;
+                padding: 18px 24px;
+            }
+
+            .table-card {
+                flex: 1 1 50%;
+                min-width: 0;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                overflow: hidden;
+            }
+
+            .table-card-title {
+                background: #0a1929;
+                padding: 8px 14px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: var(--text-dim);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .standings-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .standings-table thead th {
+                background: var(--bg-deep);
+                padding: 7px 10px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                color: var(--text-dim);
+                text-align: center;
+                border-bottom: 1px solid var(--border);
+            }
+            .standings-table thead th.col-team {
+                text-align: left;
+            }
+
+            .standings-table tbody td {
+                padding: 8px 10px;
+                text-align: center;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                font-family: "Space Mono", monospace;
+                font-size: 13px;
+                color: var(--text);
+            }
+            .standings-table tbody td.col-team {
+                text-align: left;
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 16px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                color: var(--text-bright);
+            }
+            .standings-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+            .standings-table tbody tr {
+                background: rgba(255, 255, 255, 0.01);
+            }
+
+            .standings-table tbody tr:hover td {
+                background: rgba(255, 255, 255, 0.03);
+            }
+
+            .standings-table tbody td:not(.col-team) {
+                color: #e6f0ff;
+            }
+
+            /* WC row highlights */
+            .standings-table tbody tr.wc1-row {
+                background: var(--wc1-bg);
+            }
+            .standings-table tbody tr.wc1-row td.col-team::after {
+                content: "WC1";
+                display: inline-block;
+                margin-left: 6px;
+                font-size: 9px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-weight: 700;
+                letter-spacing: 1px;
+                color: var(--wc1-accent);
+                background: rgba(74, 222, 128, 0.12);
+                padding: 1px 5px;
+                border-radius: 3px;
+            }
+            .standings-table tbody tr.wc2-row {
+                background: var(--wc2-bg);
+            }
+            .standings-table tbody tr.wc2-row td.col-team::after {
+                content: "WC2";
+                display: inline-block;
+                margin-left: 6px;
+                font-size: 9px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-weight: 700;
+                letter-spacing: 1px;
+                color: var(--wc2-accent);
+                background: rgba(56, 189, 248, 0.12);
+                padding: 1px 5px;
+                border-radius: 3px;
+            }
+
+            /* Cutline separator in right table */
+            .standings-table tbody tr.cutline td {
+                border-top: 1px dashed rgba(248, 113, 113, 0.3);
+            }
+
+            /* ─── DIVIDER ───────────────────────────────────────────── */
+            .section-divider {
+                border: none;
+                border-top: 1px solid var(--border-med);
+                margin: 0 20px;
+            }
+
+            /* ─── BOTTOM SECTION ────────────────────────────────────── */
+            #schedule-section {
+                padding: 18px 20px 32px;
+            }
+
+            .schedule-section-title {
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: var(--text-dim);
+                margin-bottom: 14px;
+            }
+
+            .team-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 10px;
+                padding: 10px 14px;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                transition: border-color 0.15s;
+            }
+            .team-row:hover {
+                border-color: var(--border-med);
+            }
+
+            .team-label {
+                width: 80px;
+                flex-shrink: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                padding-top: 6px;
+            }
+
+            .team-main {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .team-abbr {
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 20px;
+                font-weight: 800;
+                color: var(--text-bright);
+                letter-spacing: 1px;
+            }
+            .team-pts-live {
+                font-family: "Space Mono", monospace;
+                font-size: 12px;
+                color: var(--ice);
+                letter-spacing: 0px;
+            }
+
+            .games-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+            }
+
+            /* ─── GAME BOX ───────────────────────────────────────────── */
+            .game-box {
+                background: var(--bg-deep);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 6px 8px 5px;
+                text-align: center;
+                transition:
+                    border-color 0.12s,
+                    background 0.12s;
+            }
+            .game-box.result-win {
+                border-color: var(--win-border);
+                background: var(--win-bg);
+            }
+            .game-box.result-otl {
+                border-color: var(--otl-border);
+                background: var(--otl-bg);
+            }
+            .game-box.result-loss {
+                border-color: var(--loss-border);
+                background: var(--loss-bg);
+            }
+
+            .game-opponent {
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--text-bright);
+                letter-spacing: 0.5px;
+                margin-bottom: 5px;
+                line-height: 1;
+            }
+
+            .game-checkboxes {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3px 4px;
+            }
+
+            .game-checkboxes label {
+                display: flex;
+                align-items: center;
+                gap: 3px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                color: var(--text-dim);
+                cursor: pointer;
+                line-height: 1;
+                user-select: none;
+            }
+            .game-checkboxes label:hover {
+                color: var(--text);
+            }
+            .game-checkboxes input[type="checkbox"] {
+                cursor: pointer;
+                width: 11px;
+                height: 11px;
+                flex-shrink: 0;
+                accent-color: var(--ice);
+            }
+
+            /* Color the checkbox labels by type */
+            .game-checkboxes label.lbl-w {
+                color: rgba(74, 222, 128, 0.7);
+            }
+            .game-checkboxes label.lbl-l {
+                color: rgba(248, 113, 113, 0.7);
+            }
+            .game-checkboxes label.lbl-ot {
+                color: rgba(251, 191, 36, 0.7);
+            }
+            .game-checkboxes label.lbl-so {
+                color: rgba(251, 191, 36, 0.55);
+            }
+
+            .game-checkboxes label.lbl-w:hover {
+                color: var(--win);
+            }
+            .game-checkboxes label.lbl-l:hover {
+                color: var(--loss);
+            }
+            .game-checkboxes label.lbl-ot:hover {
+                color: var(--otl);
+            }
+            .game-checkboxes label.lbl-so:hover {
+                color: var(--otl);
+            }
+
+            .no-games-msg {
+                font-size: 12px;
+                color: var(--text-dim);
+                font-style: italic;
+                padding: 6px 2px;
+            }
+
+            /* ─── TEAM LOGOS ───────────────────────── */
+
+            .team-logo {
+                width: 32px;
+                height: 32px;
+                object-fit: contain;
+                margin-right: 8px;
+                vertical-align: middle;
+            }
+
+            .team-name {
+                vertical-align: middle;
+            }
+
+            /* Game box logos */
+            .game-opponent {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .game-logo {
+                width: 18px;
+                height: 18px;
+                object-fit: contain;
+            }
+
+            .team-logo,
+            .game-logo {
+                filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
+            }
+
+            .team-logo-large {
+                width: 28px;
+                height: 28px;
+                margin-bottom: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- ════════════════════════════════════ PAGE HEADER ══ -->
+        <div id="page-header">
+            <h1>NHL 2025–26 <span>Western Conference</span> Playoff Predictor</h1>
+            <p>Standings as of March 31, 2026 · Check off game results to update the playoff picture in real time</p>
+        </div>
+
+        <!-- ════════════════════════════════════ TOP 3 TABLES ══ -->
+        <div class="top-section">
+            <!-- MIDDLE: Western Conf. Qualifiers (dynamic: Pacific top 3 + WC1 + WC2) -->
+            <div class="table-card">
+                <div class="table-card-title">Pacific Division Qualifiers</div>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th class="col-team">Team</th>
+                            <th>PTS</th>
+                            <th>W</th>
+                            <th>RW</th>
+                            <th>ROW</th>
+                        </tr>
+                    </thead>
+                    <tbody id="west-tbody"></tbody>
+                </table>
+            </div>
+
+            <!-- RIGHT: Wild Card Race (dynamic: top 7 remaining non-qualifiers) -->
+            <div class="table-card">
+                <div class="table-card-title">Wild Card Race</div>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th class="col-team">Team</th>
+                            <th>PTS</th>
+                            <th>W</th>
+                            <th>RW</th>
+                            <th>ROW</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wc-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- /.top-section -->
+
+        <hr class="section-divider" />
+
+        <!-- ════════════════════════════════════ SCHEDULE SECTION ══ -->
+        <div id="schedule-section">
+            <div class="schedule-section-title">Remaining Schedule</div>
+            <!-- Rows injected by buildSchedule() -->
+        </div>
+
+        <!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+═════════════════════════════════════════════════════════ -->
+        <script>
+            // ─────────────────────────────────────────────────────────
+            //  BASE STANDINGS  (ESPN, March 31 2026)
+            //  columns: pts, w, rw, row
+            //  division: "C" = Central  |  "P" = Pacific
+            // ─────────────────────────────────────────────────────────
+            var BASE = {
+                // Central – bubble (have schedule rows; CHI excluded from schedule rows per user spec)
+                UTA: { name: "Utah Mammoth", pts: 82, w: 38, rw: 29, row: 38, div: "C" },
+                NSH: { name: "Nashville Predators", pts: 77, w: 34, rw: 25, row: 30, div: "C" },
+                WPG: { name: "Winnipeg Jets", pts: 74, w: 31, rw: 25, row: 29, div: "C" },
+                STL: { name: "St. Louis Blues", pts: 73, w: 31, rw: 27, row: 30, div: "C" },
+                // Pacific
+                VGK: { name: "Vegas Golden Knights", pts: 82, w: 33, rw: 25, row: 32, div: "P" },
+                EDM: { name: "Edmonton Oilers", pts: 83, w: 37, rw: 28, row: 37, div: "P" },
+                SEA: { name: "Seattle Kraken", pts: 75, w: 32, rw: 25, row: 31, div: "P" },
+                ANA: { name: "Anaheim Ducks", pts: 87, w: 41, rw: 24, row: 33, div: "P" },
+                LAK: { name: "Los Angeles Kings", pts: 76, w: 29, rw: 19, row: 25, div: "P" },
+                SJS: { name: "San Jose Sharks", pts: 75, w: 34, rw: 22, row: 32, div: "P" },
+            };
+
+            // Teams shown in the schedule rows at the bottom
+            var SCHEDULE_TEAMS = ["SEA", "LAK", "SJS", "NSH", "WPG", "STL", "UTA", "ANA", "VGK", "EDM"];
+
+            // All Pacific teams (for determining Pacific top 3)
+            var PACIFIC = ["VGK", "EDM", "SEA", "ANA", "LAK", "SJS"];
+
+            // Remaining Central teams competing for WC spots
+            var CENTRAL_BUBBLE = ["UTA", "NSH", "WPG", "STL"];
+
+            // ─────────────────────────────────────────────────────────
+            //  SCHEDULE
+            //
+            //  Keys are game-day numbers (sorted ascending = left to right).
+            // ─────────────────────────────────────────────────────────
+            var schedule = {
+                SEA: {
+                    g1: { Opponent: "EDM", away: true },
+                    g2: { Opponent: "UTA", away: false },
+                    g3: { Opponent: "CHI", away: false },
+                    g4: { Opponent: "WPG", away: true },
+                    g5: { Opponent: "MIN", away: true },
+                    g6: { Opponent: "VGK", away: false },
+                    g7: { Opponent: "CGY", away: false },
+                    g8: { Opponent: "LAK", away: false },
+                    g9: { Opponent: "VGK", away: true },
+                    g10: { Opponent: "COL", away: true },
+                },
+                UTA: {
+                    g2: { Opponent: "SEA", away: true },
+                    g11: { Opponent: "VAN", away: true },
+                    g12: { Opponent: "EDM", away: false },
+                    g13: { Opponent: "NSH", away: false },
+                    g14: { Opponent: "CAR", away: false },
+                    g15: { Opponent: "CGY", away: true },
+                    g16: { Opponent: "WPG", away: false },
+                    g17: { Opponent: "STL", away: false },
+                },
+                EDM: {
+                    g1: { Opponent: "SEA", away: false },
+                    g18: { Opponent: "CHI", away: false },
+                    g19: { Opponent: "VGK", away: false },
+                    g12: { Opponent: "UTA", away: true },
+                    g20: { Opponent: "SJS", away: true },
+                    g21: { Opponent: "LAK", away: true },
+                    g22: { Opponent: "COL", away: false },
+                    g23: { Opponent: "VAN", away: false },
+                },
+                LAK: {
+                    g24: { Opponent: "STL", away: false },
+                    g25: { Opponent: "NSH", away: false },
+                    g26: { Opponent: "TOR", away: false },
+                    g27: { Opponent: "NSH", away: false },
+                    g28: { Opponent: "VAN", away: false },
+                    g21: { Opponent: "EDM", away: false },
+                    g8: { Opponent: "SEA", away: true },
+                    g29: { Opponent: "VAN", away: true },
+                    g30: { Opponent: "CGY", away: true },
+                },
+                SJS: {
+                    g31: { Opponent: "ANA", away: false },
+                    g32: { Opponent: "TOR", away: false },
+                    g33: { Opponent: "NSH", away: false },
+                    g34: { Opponent: "CHI", away: false },
+                    g20: { Opponent: "EDM", away: false },
+                    g35: { Opponent: "ANA", away: true },
+                    g36: { Opponent: "VAN", away: false },
+                    g37: { Opponent: "NSH", away: true },
+                    g38: { Opponent: "CHI", away: true },
+                    g39: { Opponent: "WPG", away: true },
+                },
+                VGK: {
+                    g40: { Opponent: "CGY", away: false },
+                    g19: { Opponent: "EDM", away: true },
+                    g41: { Opponent: "VAN", away: true },
+                    g6: { Opponent: "SEA", away: true },
+                    g42: { Opponent: "COL", away: true },
+                    g43: { Opponent: "WPG", away: false },
+                    g9: { Opponent: "SEA", away: false },
+                },
+                ANA: {
+                    g31: { Opponent: "SJS", away: true },
+                    g44: { Opponent: "STL", away: false },
+                    g45: { Opponent: "CGY", away: false },
+                    g46: { Opponent: "NSH", away: false },
+                    g35: { Opponent: "SJS", away: false },
+                    g47: { Opponent: "VAN", away: false },
+                    g48: { Opponent: "MIN", away: true },
+                    g49: { Opponent: "NSH", away: true },
+                },
+                NSH: {
+                    g25: { Opponent: "LAK", away: true },
+                    g33: { Opponent: "SJS", away: true },
+                    g27: { Opponent: "LAK", away: true },
+                    g46: { Opponent: "ANA", away: true },
+                    g13: { Opponent: "UTA", away: true },
+                    g50: { Opponent: "MIN", away: false },
+                    g37: { Opponent: "SJS", away: false },
+                    g49: { Opponent: "ANA", away: false },
+                },
+                WPG: {
+                    g51: { Opponent: "CHI", away: true },
+                    g52: { Opponent: "DAL", away: true },
+                    g53: { Opponent: "CBJ", away: true },
+                    g4: { Opponent: "SEA", away: false },
+                    g54: { Opponent: "STL", away: true },
+                    g55: { Opponent: "PHI", away: false },
+                    g43: { Opponent: "VGK", away: true },
+                    g16: { Opponent: "UTA", away: true },
+                    g39: { Opponent: "SJS", away: false },
+                },
+                STL: {
+                    g24: { Opponent: "LAK", away: true },
+                    g44: { Opponent: "ANA", away: true },
+                    g56: { Opponent: "COL", away: true },
+                    g57: { Opponent: "COL", away: false },
+                    g54: { Opponent: "WPG", away: false },
+                    g58: { Opponent: "CHI", away: true },
+                    g59: { Opponent: "MIN", away: false },
+                    g60: { Opponent: "PIT", away: false },
+                    g17: { Opponent: "UTA", away: true },
+                },
+            };
+            // ─────────────────────────────────────────────────────────
+
+            // Game result state: gameState["SEA_2"] = { w, l, ot, so }
+            var gameState = {};
+
+            // ─── Standings helpers ────────────────────────────────────
+            function delta(team) {
+                var d = { pts: 0, w: 0, rw: 0, row: 0 };
+                var games = schedule[team] || {};
+                for (var gn in games) {
+                    var r = gameState[team + "_" + gn] || {};
+                    if (r.w) {
+                        d.pts += 2;
+                        d.w += 1;
+                        if (!r.ot && !r.so) {
+                            d.rw += 1;
+                            d.row += 1;
+                        } // regulation win
+                        else if (r.ot && !r.so) {
+                            d.row += 1;
+                        } // OT win (not SO)
+                        // SO win: no rw, no row
+                    } else if (r.l && (r.ot || r.so)) {
+                        d.pts += 1; // OT/SO loss
+                    }
+                }
+                return d;
+            }
+
+            function current(team) {
+                var b = BASE[team],
+                    d2 = delta(team);
+                return { pts: b.pts + d2.pts, w: b.w + d2.w, rw: b.rw + d2.rw, row: b.row + d2.row };
+            }
+
+            function sortTeams(arr) {
+                return arr.slice().sort(function (a, b) {
+                    var sa = current(a),
+                        sb = current(b);
+
+                    return (
+                        sb.pts - sa.pts || // Points
+                        sb.rw - sa.rw || // Regulation Wins (PRIMARY tiebreaker)
+                        sb.row - sa.row || // Regulation + OT Wins
+                        sb.w - sa.w // Total Wins
+                    );
+                });
+            }
+
+            // ─── Table rendering ─────────────────────────────────────
+            function teamAbbr(team) {
+                // Friendly display abbreviations
+                var map = { SJ: "SJS", LA: "LAK" };
+                return map[team] || team;
+            }
+
+            function logoSrc(team) {
+                return "images/" + team + ".webp";
+            }
+
+            function makeRow(team, cls) {
+                var s = current(team);
+                var clsAttr = cls ? ' class="' + cls + '"' : "";
+                return (
+                    "<tr" +
+                    clsAttr +
+                    ">" +
+                    '<td class="col-team">' +
+                    '<img class="team-logo" src="' +
+                    logoSrc(team) +
+                    '" />' +
+                    '<span class="team-name">' +
+                    teamAbbr(team) +
+                    "</span>" +
+                    "</td>" +
+                    "<td>" +
+                    s.pts +
+                    "</td>" +
+                    "<td>" +
+                    s.w +
+                    "</td>" +
+                    "<td>" +
+                    s.rw +
+                    "</td>" +
+                    "<td>" +
+                    s.row +
+                    "</td>" +
+                    "</tr>"
+                );
+            }
+
+            function updateTables() {
+                // Sort Pacific → determine Pacific top 3
+                var sortedPacific = sortTeams(PACIFIC);
+                var pac3 = sortedPacific.slice(0, 3);
+                var pacRem = sortedPacific.slice(3);
+
+                // All bubble teams (Central 4-8 + Pacific 4-8)
+                var bubble = sortTeams(CENTRAL_BUBBLE.concat(pacRem));
+                var wc1 = bubble[0],
+                    wc2 = bubble[1];
+
+                // ── Middle table: Pacific top 3
+                var midHtml = "";
+                pac3.forEach(function (t) {
+                    midHtml += makeRow(t, "");
+                });
+                document.getElementById("west-tbody").innerHTML = midHtml;
+
+                // ── Right table: top 7 bubble teams, WC1/WC2 highlighted, cutline after #2
+                var wcHtml = "";
+                bubble.slice(0, 7).forEach(function (t, i) {
+                    var cls = "";
+                    if (i === 0) cls = "wc1-row";
+                    else if (i === 1) cls = "wc2-row";
+                    else if (i === 2) cls = "cutline";
+                    wcHtml += makeRow(t, cls);
+                });
+                document.getElementById("wc-tbody").innerHTML = wcHtml;
+
+                // ── Update live PTS badges in schedule rows
+                SCHEDULE_TEAMS.forEach(function (t) {
+                    var el = document.getElementById("live_" + t);
+                    if (el) el.textContent = current(t).pts + " PTS";
+                });
+            }
+
+            function syncOpponent(team, gn, r) {
+                var game = (schedule[team] || {})[gn];
+                if (!game) return;
+
+                var opp = game.Opponent;
+                if (!schedule[opp] || !schedule[opp][gn]) return;
+
+                var oppKey = opp + "_" + gn;
+
+                // Build opponent result (inverse)
+                var oppResult = { w: false, l: false, ot: false, so: false };
+
+                if (r.w) {
+                    oppResult.l = true;
+                } else if (r.l) {
+                    oppResult.w = true;
+                }
+
+                // OT/SO carry over
+                oppResult.ot = r.ot;
+                oppResult.so = r.so;
+
+                gameState[oppKey] = oppResult;
+
+                // Update opponent checkboxes
+                var ids = ["w", "l", "ot", "so"];
+                ids.forEach(function (type) {
+                    var el = document.getElementById(oppKey + "_" + type);
+                    if (el) el.checked = oppResult[type];
+                });
+
+                // Update opponent box styling
+                var box = document.getElementById("box_" + oppKey);
+                if (box) {
+                    box.className = "game-box";
+                    if (oppResult.w) box.classList.add("result-win");
+                    else if (oppResult.l && (oppResult.ot || oppResult.so)) box.classList.add("result-otl");
+                    else if (oppResult.l) box.classList.add("result-loss");
+                }
+            }
+
+            // ─── Checkbox handler ─────────────────────────────────────
+            function handleCheck(team, gn, type, cb) {
+                var key = team + "_" + gn;
+                var r = Object.assign({ w: false, l: false, ot: false, so: false }, gameState[key]);
+
+                if (type === "w") {
+                    r.w = cb.checked;
+                    if (r.w) r.l = false;
+                } else if (type === "l") {
+                    r.l = cb.checked;
+                    if (r.l) r.w = false;
+                } else if (type === "ot") {
+                    r.ot = cb.checked;
+                    if (!r.ot) r.so = false;
+                } else if (type === "so") {
+                    r.so = cb.checked;
+                    if (r.so) r.ot = true;
+                }
+
+                gameState[key] = r;
+                syncOpponent(team, gn, r);
+
+                // Sync DOM checkboxes (side-effects from mutual exclusion / SO→OT)
+                document.getElementById(key + "_w").checked = r.w;
+                document.getElementById(key + "_l").checked = r.l;
+                document.getElementById(key + "_ot").checked = r.ot;
+                document.getElementById(key + "_so").checked = r.so;
+
+                // Style the game box
+                var box = document.getElementById("box_" + key);
+                box.className = "game-box";
+                if (r.w) box.classList.add("result-win");
+                else if (r.l && (r.ot || r.so)) box.classList.add("result-otl");
+                else if (r.l) box.classList.add("result-loss");
+
+                updateTables();
+            }
+
+            // ─── Build schedule rows ──────────────────────────────────
+            function buildSchedule() {
+                var section = document.getElementById("schedule-section");
+                var titleEl = section.querySelector(".schedule-section-title");
+                section.innerHTML = "";
+                section.appendChild(titleEl);
+
+                SCHEDULE_TEAMS.forEach(function (team) {
+                    var games = schedule[team] || {};
+                    var gnums = Object.entries(games).map(function ([gn]) {
+                        return gn;
+                    });
+
+                    var row = document.createElement("div");
+                    row.className = "team-row";
+
+                    // Team label column
+                    var labelHtml =
+                        '<div class="team-label">' +
+                        '<div class="team-main">' +
+                        '<img class="team-logo-large" src="' +
+                        logoSrc(team) +
+                        '" />' +
+                        '<div class="team-abbr">' +
+                        teamAbbr(team) +
+                        "</div>" +
+                        "</div>" +
+                        '<div class="team-pts-live" id="live_' +
+                        team +
+                        '">' +
+                        current(team).pts +
+                        " PTS" +
+                        "</div>" +
+                        "</div>";
+
+                    // Game boxes
+                    var gamesHtml = '<div class="games-container">';
+                    if (gnums.length === 0) {
+                        gamesHtml += '<div class="no-games-msg">No games scheduled yet</div>';
+                    } else {
+                        gnums.forEach(function (gn) {
+                            var opp = games[gn].Opponent || games[gn].opponent || "?";
+                            var key = team + "_" + gn;
+                            gamesHtml +=
+                                '<div class="game-box" id="box_' +
+                                key +
+                                '">' +
+                                '<div class="game-opponent">' +
+                                '<img class="game-logo" src="' +
+                                logoSrc(opp) +
+                                '" />' +
+                                "<span>" +
+                                (games[gn].away ? "@" : "") +
+                                opp +
+                                "</span>" +
+                                "</div>" +
+                                '<div class="game-checkboxes">' +
+                                '<label class="lbl-w"><input type="checkbox" id="' +
+                                key +
+                                '_w" onclick="handleCheck(\'' +
+                                team +
+                                "','" +
+                                gn +
+                                "','w',this)\"> W</label>" +
+                                '<label class="lbl-l"><input type="checkbox" id="' +
+                                key +
+                                '_l" onclick="handleCheck(\'' +
+                                team +
+                                "','" +
+                                gn +
+                                "','l',this)\"> L</label>" +
+                                '<label class="lbl-ot"><input type="checkbox" id="' +
+                                key +
+                                '_ot" onclick="handleCheck(\'' +
+                                team +
+                                "','" +
+                                gn +
+                                "','ot',this)\"> OT</label>" +
+                                '<label class="lbl-so"><input type="checkbox" id="' +
+                                key +
+                                '_so" onclick="handleCheck(\'' +
+                                team +
+                                "','" +
+                                gn +
+                                "','so',this)\"> SO</label>" +
+                                "</div>" +
+                                "</div>";
+                        });
+                    }
+                    gamesHtml += "</div>";
+
+                    row.innerHTML = labelHtml + gamesHtml;
+                    section.appendChild(row);
+                });
+            }
+
+            // ─── Init ────────────────────────────────────────────────
+            buildSchedule();
+            updateTables();
+        </script>
+    </body>
+</html>
