@@ -87,6 +87,7 @@
             }
 
             .table-card {
+                position: relative;
                 flex: 1 1 50%;
                 min-width: 0;
                 background: var(--bg-card);
@@ -197,6 +198,37 @@
             /* Cutline separator in right table */
             .standings-table tbody tr.cutline td {
                 border-top: 1px dashed rgba(248, 113, 113, 0.3);
+            }
+
+            .standings-legend {
+                width: 100%;
+                border-top: 1px solid var(--border);
+                position: absolute;
+                bottom: 0;
+                background: #0a1929;
+                padding: 8px 10px;
+                color: var(--text-dim);
+                font-size: 11px;
+            }
+
+            .standings-legend p.header {
+                margin-bottom: 4px;
+                font-family: "Barlow Condensed", sans-serif;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            .standings-legend p {
+                font-family: "Barlow", monospace;
+                letter-spacing: 0.3px;
+                text-transform: none;
+                font-weight: 400;
+                margin-left: 8px;
+            }
+
+            .standings-legend p sup {
+                font-family: "Space Mono", monospace;
             }
 
             /* ─── DIVIDER ───────────────────────────────────────────── */
@@ -414,7 +446,7 @@
         <!-- ════════════════════════════════════ PAGE HEADER ══ -->
         <div id="page-header">
             <h1>NHL 2025–26 <span>Western Conference</span> Playoff Predictor</h1>
-            <p>Standings as of March 31, 2026 · Check off game results to update the playoff picture in real time</p>
+            <p>Standings as of April 1, 2026 · Check off game results to update the playoff picture in real time</p>
         </div>
 
         <!-- ════════════════════════════════════ TOP 3 TABLES ══ -->
@@ -434,6 +466,12 @@
                     </thead>
                     <tbody id="west-tbody"></tbody>
                 </table>
+                <div class="standings-legend">
+                    <p class="header">Tiebreakers</p>
+                    <p><sup>1 </sup>Regulation Wins</p>
+                    <p><sup>2 </sup>Regulation + Overtime Wins</p>
+                    <p><sup>3 </sup>Wins</p>
+                </div>
             </div>
 
             <!-- RIGHT: Wild Card Race (dynamic: top 7 remaining non-qualifiers) -->
@@ -476,14 +514,14 @@
                 // Central – bubble (have schedule rows; CHI excluded from schedule rows per user spec)
                 UTA: { name: "Utah Mammoth", pts: 82, w: 38, rw: 29, row: 38, div: "C" },
                 NSH: { name: "Nashville Predators", pts: 77, w: 34, rw: 25, row: 30, div: "C" },
-                WPG: { name: "Winnipeg Jets", pts: 74, w: 31, rw: 25, row: 29, div: "C" },
+                WPG: { name: "Winnipeg Jets", pts: 76, w: 32, rw: 25, row: 30, div: "C" },
                 STL: { name: "St. Louis Blues", pts: 73, w: 31, rw: 27, row: 30, div: "C" },
                 // Pacific
-                VGK: { name: "Vegas Golden Knights", pts: 82, w: 33, rw: 25, row: 32, div: "P" },
-                EDM: { name: "Edmonton Oilers", pts: 83, w: 37, rw: 28, row: 37, div: "P" },
-                SEA: { name: "Seattle Kraken", pts: 75, w: 32, rw: 25, row: 31, div: "P" },
                 ANA: { name: "Anaheim Ducks", pts: 87, w: 41, rw: 24, row: 33, div: "P" },
+                EDM: { name: "Edmonton Oilers", pts: 85, w: 38, rw: 29, row: 38, div: "P" },
+                VGK: { name: "Vegas Golden Knights", pts: 82, w: 33, rw: 25, row: 32, div: "P" },
                 LAK: { name: "Los Angeles Kings", pts: 76, w: 29, rw: 19, row: 25, div: "P" },
+                SEA: { name: "Seattle Kraken", pts: 75, w: 32, rw: 25, row: 31, div: "P" },
                 SJS: { name: "San Jose Sharks", pts: 75, w: 34, rw: 22, row: 32, div: "P" },
             };
 
@@ -503,7 +541,6 @@
             // ─────────────────────────────────────────────────────────
             var schedule = {
                 SEA: {
-                    g1: { Opponent: "EDM", away: true },
                     g2: { Opponent: "UTA", away: false },
                     g3: { Opponent: "CHI", away: false },
                     g4: { Opponent: "WPG", away: true },
@@ -525,7 +562,6 @@
                     g17: { Opponent: "STL", away: false },
                 },
                 EDM: {
-                    g1: { Opponent: "SEA", away: false },
                     g18: { Opponent: "CHI", away: false },
                     g19: { Opponent: "VGK", away: false },
                     g12: { Opponent: "UTA", away: true },
@@ -587,7 +623,6 @@
                     g49: { Opponent: "ANA", away: false },
                 },
                 WPG: {
-                    g51: { Opponent: "CHI", away: true },
                     g52: { Opponent: "DAL", away: true },
                     g53: { Opponent: "CBJ", away: true },
                     g4: { Opponent: "SEA", away: false },
