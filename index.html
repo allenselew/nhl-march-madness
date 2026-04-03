@@ -446,7 +446,7 @@
         <!-- ════════════════════════════════════ PAGE HEADER ══ -->
         <div id="page-header">
             <h1>NHL 2025–26 <span>Western Conference</span> Playoff Predictor</h1>
-            <p>Standings as of April 1, 2026 · Check off game results to update the playoff picture in real time</p>
+            <p>Standings as of April 3, 2026 · Check off game results to update the playoff picture in real time</p>
         </div>
 
         <!-- ════════════════════════════════════ TOP 3 TABLES ══ -->
@@ -512,17 +512,17 @@
             // ─────────────────────────────────────────────────────────
             var BASE = {
                 // Central – bubble (have schedule rows; CHI excluded from schedule rows per user spec)
-                UTA: { name: "Utah Mammoth", pts: 82, w: 38, rw: 29, row: 38, div: "C" },
-                NSH: { name: "Nashville Predators", pts: 77, w: 34, rw: 25, row: 30, div: "C" },
+                UTA: { name: "Utah Mammoth", pts: 84, w: 39, rw: 30, row: 39, div: "C" },
+                NSH: { name: "Nashville Predators", pts: 79, w: 35, rw: 25, row: 30, div: "C" },
                 WPG: { name: "Winnipeg Jets", pts: 76, w: 32, rw: 25, row: 30, div: "C" },
-                STL: { name: "St. Louis Blues", pts: 73, w: 31, rw: 27, row: 30, div: "C" },
+                STL: { name: "St. Louis Blues", pts: 74, w: 31, rw: 27, row: 30, div: "C" },
                 // Pacific
                 ANA: { name: "Anaheim Ducks", pts: 87, w: 41, rw: 24, row: 33, div: "P" },
-                EDM: { name: "Edmonton Oilers", pts: 85, w: 38, rw: 29, row: 38, div: "P" },
-                VGK: { name: "Vegas Golden Knights", pts: 82, w: 33, rw: 25, row: 32, div: "P" },
-                LAK: { name: "Los Angeles Kings", pts: 76, w: 29, rw: 19, row: 25, div: "P" },
+                EDM: { name: "Edmonton Oilers", pts: 87, w: 39, rw: 30, row: 39, div: "P" },
+                VGK: { name: "Vegas Golden Knights", pts: 84, w: 34, rw: 26, row: 33, div: "P" },
+                LAK: { name: "Los Angeles Kings", pts: 79, w: 30, rw: 19, row: 26, div: "P" },
                 SEA: { name: "Seattle Kraken", pts: 75, w: 32, rw: 25, row: 31, div: "P" },
-                SJS: { name: "San Jose Sharks", pts: 75, w: 34, rw: 22, row: 32, div: "P" },
+                SJS: { name: "San Jose Sharks", pts: 79, w: 36, rw: 24, row: 34, div: "P" },
             };
 
             // Teams shown in the schedule rows at the bottom
@@ -541,7 +541,6 @@
             // ─────────────────────────────────────────────────────────
             var schedule = {
                 SEA: {
-                    g2: { Opponent: "UTA", away: false },
                     g3: { Opponent: "CHI", away: false },
                     g4: { Opponent: "WPG", away: true },
                     g5: { Opponent: "MIN", away: true },
@@ -552,7 +551,6 @@
                     g10: { Opponent: "COL", away: true },
                 },
                 UTA: {
-                    g2: { Opponent: "SEA", away: true },
                     g11: { Opponent: "VAN", away: true },
                     g12: { Opponent: "EDM", away: false },
                     g13: { Opponent: "NSH", away: false },
@@ -562,7 +560,6 @@
                     g17: { Opponent: "STL", away: false },
                 },
                 EDM: {
-                    g18: { Opponent: "CHI", away: false },
                     g19: { Opponent: "VGK", away: false },
                     g12: { Opponent: "UTA", away: true },
                     g20: { Opponent: "SJS", away: true },
@@ -571,8 +568,6 @@
                     g23: { Opponent: "VAN", away: false },
                 },
                 LAK: {
-                    g24: { Opponent: "STL", away: false },
-                    g25: { Opponent: "NSH", away: false },
                     g26: { Opponent: "TOR", away: false },
                     g27: { Opponent: "NSH", away: false },
                     g28: { Opponent: "VAN", away: false },
@@ -582,8 +577,6 @@
                     g30: { Opponent: "CGY", away: true },
                 },
                 SJS: {
-                    g31: { Opponent: "ANA", away: false },
-                    g32: { Opponent: "TOR", away: false },
                     g33: { Opponent: "NSH", away: false },
                     g34: { Opponent: "CHI", away: false },
                     g20: { Opponent: "EDM", away: false },
@@ -594,7 +587,6 @@
                     g39: { Opponent: "WPG", away: true },
                 },
                 VGK: {
-                    g40: { Opponent: "CGY", away: false },
                     g19: { Opponent: "EDM", away: true },
                     g41: { Opponent: "VAN", away: true },
                     g6: { Opponent: "SEA", away: true },
@@ -603,7 +595,6 @@
                     g9: { Opponent: "SEA", away: false },
                 },
                 ANA: {
-                    g31: { Opponent: "SJS", away: true },
                     g44: { Opponent: "STL", away: false },
                     g45: { Opponent: "CGY", away: false },
                     g46: { Opponent: "NSH", away: false },
@@ -613,7 +604,6 @@
                     g49: { Opponent: "NSH", away: true },
                 },
                 NSH: {
-                    g25: { Opponent: "LAK", away: true },
                     g33: { Opponent: "SJS", away: true },
                     g27: { Opponent: "LAK", away: true },
                     g46: { Opponent: "ANA", away: true },
@@ -623,7 +613,6 @@
                     g49: { Opponent: "ANA", away: false },
                 },
                 WPG: {
-                    g52: { Opponent: "DAL", away: true },
                     g53: { Opponent: "CBJ", away: true },
                     g4: { Opponent: "SEA", away: false },
                     g54: { Opponent: "STL", away: true },
@@ -633,7 +622,6 @@
                     g39: { Opponent: "SJS", away: false },
                 },
                 STL: {
-                    g24: { Opponent: "LAK", away: true },
                     g44: { Opponent: "ANA", away: true },
                     g56: { Opponent: "COL", away: true },
                     g57: { Opponent: "COL", away: false },
